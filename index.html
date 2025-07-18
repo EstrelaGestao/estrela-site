@@ -5,143 +5,277 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Estrela Gestão em Informática</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Inter', sans-serif; }
     html { scroll-behavior: smooth; }
+    /* Animação suave para links do menu */
+    nav a {
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+    nav a:hover {
+      transform: translateY(-2px);
+    }
+    /* Sombras suaves para cartões */
+    .card {
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 12px 20px rgba(59,130,246,0.3);
+      transform: translateY(-5px);
+    }
+    /* Botão azul mais vibrante e com sombra */
+    .btn-primary {
+      background-color: #2563eb; /* blue-600 */
+      box-shadow: 0 4px 14px rgba(37,99,235,0.39);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #1e40af; /* blue-800 */
+      box-shadow: 0 6px 20px rgba(30,64,175,0.5);
+    }
 
+    /* Menu hambúrguer */
+    .hamburger {
+      cursor: pointer;
+      width: 28px;
+      height: 22px;
+      position: relative;
+      display: inline-block;
+      z-index: 60; /* acima do menu */
+    }
     .hamburger span {
+      background: #2563eb;
+      border-radius: 2px;
       display: block;
-      width: 24px;
-      height: 2px;
-      margin: 5px auto;
+      position: absolute;
+      height: 3px;
+      width: 100%;
       transition: all 0.3s ease-in-out;
-      background-color: #1f2937; /* text-gray-800 */
     }
-
+    .hamburger span:nth-child(1) {
+      top: 0;
+    }
+    .hamburger span:nth-child(2) {
+      top: 9px;
+    }
+    .hamburger span:nth-child(3) {
+      bottom: 0;
+    }
     .hamburger.active span:nth-child(1) {
-      transform: translateY(7px) rotate(45deg);
+      transform: rotate(45deg);
+      top: 9px;
     }
-
     .hamburger.active span:nth-child(2) {
       opacity: 0;
     }
-
     .hamburger.active span:nth-child(3) {
-      transform: translateY(-7px) rotate(-45deg);
+      transform: rotate(-45deg);
+      bottom: 9px;
     }
 
-    .btn-primary {
-      background: linear-gradient(to right, #2563eb, #1e40af);
-      box-shadow: 0 4px 14px rgba(37,99,235,0.39);
-      transition: background 0.3s ease, box-shadow 0.3s ease;
+    /* Mobile menu hidden por padrão */
+    #mobile-menu {
+      transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
     }
-    .btn-primary:hover {
-      box-shadow: 0 6px 20px rgba(30,64,175,0.5);
+    #mobile-menu.open {
+      max-height: 500px; /* o suficiente para o conteúdo */
+      opacity: 1;
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-white via-blue-50 to-blue-200 text-gray-800 relative">
+<body class="bg-gradient-to-br from-white via-blue-50 to-blue-100 text-gray-800">
 
-<!-- Header com menu mobile deslizante -->
-<header class="fixed w-full bg-white/80 backdrop-blur-md shadow-md z-50">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
-    <img src="/estrela-site/images/IconePadrao.jpg" alt="Estrela Logo" class="h-10 sm:h-12 w-auto" />
-
-    <!-- Menu Desktop -->
-    <nav class="hidden md:flex space-x-6 text-sm font-semibold text-gray-700">
-      <a href="#inicio" class="hover:text-blue-600">Início</a>
-      <a href="#quem-somos" class="hover:text-blue-600">Quem Somos</a>
-      <a href="#servicos" class="hover:text-blue-600">Serviços</a>
-      <a href="#catalogo" class="hover:text-blue-600">Catálogo</a>
-      <a href="#contato" class="hover:text-blue-600">Contato</a>
+<!-- Header -->
+<header class="fixed w-full bg-white shadow-md z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <img src="/estrela-site/images/IconePadrao.jpg" alt="Estrela Logo" class="h-12 w-auto" />
+    
+    <!-- Menu desktop -->
+    <nav class="hidden md:flex space-x-8 font-semibold text-gray-700">
+      <a href="#inicio" class="text-sm hover:text-blue-600">Início</a>
+      <a href="#quem-somos" class="text-sm hover:text-blue-600">Quem Somos</a>
+      <a href="#servicos" class="text-sm hover:text-blue-600">Serviços</a>
+      <a href="#catalogo" class="text-sm hover:text-blue-600">Catálogo</a>
+      <a href="#contato" class="text-sm hover:text-blue-600">Contato</a>
     </nav>
 
-    <!-- Ícone hamburguer -->
-    <div id="menuToggle" class="hamburger md:hidden cursor-pointer z-50">
+    <!-- Botão hambúrguer mobile -->
+    <button id="hamburger" aria-label="Abrir menu" class="md:hidden hamburger">
       <span></span>
       <span></span>
       <span></span>
-    </div>
+    </button>
   </div>
+
+  <!-- Menu mobile -->
+  <nav id="mobile-menu" class="md:hidden bg-white shadow-md border-t border-gray-200">
+    <div class="flex flex-col px-6 py-4 space-y-4 font-semibold text-gray-700">
+      <a href="#inicio" class="text-base hover:text-blue-600" onclick="closeMenu()">Início</a>
+      <a href="#quem-somos" class="text-base hover:text-blue-600" onclick="closeMenu()">Quem Somos</a>
+      <a href="#servicos" class="text-base hover:text-blue-600" onclick="closeMenu()">Serviços</a>
+      <a href="#catalogo" class="text-base hover:text-blue-600" onclick="closeMenu()">Catálogo</a>
+      <a href="#contato" class="text-base hover:text-blue-600" onclick="closeMenu()">Contato</a>
+    </div>
+  </nav>
 </header>
 
-<!-- Menu Mobile Deslizante -->
-<div id="mobileMenu" class="fixed top-0 right-0 w-64 h-full bg-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-40 flex flex-col pt-24 px-6 space-y-6 text-gray-700 font-semibold md:hidden">
-  <a href="#inicio" class="hover:text-blue-600">Início</a>
-  <a href="#quem-somos" class="hover:text-blue-600">Quem Somos</a>
-  <a href="#servicos" class="hover:text-blue-600">Serviços</a>
-  <a href="#catalogo" class="hover:text-blue-600">Catálogo</a>
-  <a href="#contato" class="hover:text-blue-600">Contato</a>
-</div>
-
 <main class="pt-24">
-  <!-- Seção Início -->
-  <section id="inicio" class="min-h-[70vh] flex flex-col items-center justify-center text-center px-4">
-    <h1 class="text-3xl sm:text-5xl font-bold text-blue-800 mb-4">Bem-vindo à Estrela Gestão em Informática</h1>
-    <p class="text-gray-600 text-lg sm:text-xl max-w-xl mb-6">Soluções completas em informática para sua empresa, com atendimento técnico especializado.</p>
-    <a href="#contato" class="btn-primary text-white px-6 py-3 rounded-xl text-sm font-semibold">Entre em Contato</a>
-  </section>
 
-  <!-- Seção Quem Somos -->
-  <section id="quem-somos" class="py-16 px-4 bg-white text-center">
-    <h2 class="text-3xl font-bold text-blue-700 mb-4">Quem Somos</h2>
-    <p class="text-gray-700 max-w-3xl mx-auto text-lg">A Estrela Gestão em Informática atua no mercado oferecendo soluções em tecnologia com excelência no atendimento e foco nas necessidades do cliente.</p>
-  </section>
-
-  <!-- Seção Serviços -->
-  <section id="servicos" class="py-16 px-4 text-center bg-gradient-to-br from-white to-blue-50">
-    <h2 class="text-3xl font-bold text-blue-700 mb-4">Nossos Serviços</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto mt-8">
-      <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition">Manutenção em computadores</div>
-      <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition">Venda de peças e periféricos</div>
-      <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition">Atendimento técnico especializado</div>
+  <!-- Início -->
+  <section id="inicio" class="relative bg-white py-28 flex flex-col items-center justify-center text-center px-6 md:px-0 overflow-hidden">
+    <img src="/estrela-site/images/Icone3d.jpg" alt="Banner Estrela" class="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none" />
+    <div class="relative z-10 max-w-3xl">
+      <h1 class="text-5xl md:text-6xl font-extrabold mb-6 text-blue-800 drop-shadow-lg">Tecnologia que impulsiona seu negócio</h1>
+      <p class="text-xl md:text-2xl text-blue-700 mb-8 leading-relaxed drop-shadow-sm">
+        Soluções inteligentes em automação comercial com suporte rápido, consultoria especializada e equipamentos de qualidade.
+      </p>
+      <a href="#servicos" class="btn-primary px-8 py-4 rounded-full text-white font-bold shadow-lg inline-block hover:shadow-xl">
+        Conheça nossos serviços
+      </a>
     </div>
   </section>
 
-  <!-- Seção Catálogo -->
-  <section id="catalogo" class="py-16 px-4 text-center bg-white">
-    <h2 class="text-3xl font-bold text-blue-700 mb-6">Catálogo de Produtos</h2>
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-6xl mx-auto">
-      <div class="bg-blue-100 rounded-xl p-4">Computadores completos</div>
-      <div class="bg-blue-100 rounded-xl p-4">Bobinas</div>
-      <div class="bg-blue-100 rounded-xl p-4">SSDs</div>
-      <div class="bg-blue-100 rounded-xl p-4">Monitores</div>
+  <!-- Quem Somos -->
+  <section id="quem-somos" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <h2 class="text-4xl font-extrabold text-center text-blue-900 mb-10 drop-shadow-md">Quem Somos</h2>
+      <p class="text-gray-700 text-lg text-center max-w-4xl mx-auto mb-14 leading-relaxed">
+        A <strong>Estrela Gestão em Informática</strong> é especializada em automação comercial. Atuamos com revenda de softwares adaptados às necessidades dos nossos clientes, oferecendo também consultoria focada em <strong>lucro real</strong>, suporte técnico ágil e experiência nas áreas <strong>fiscal e tributária</strong>. Além disso, vendemos equipamentos como impressoras térmicas, leitores de código de barras, bobinas e computadores.
+      </p>
+
+      <div class="flex flex-col md:flex-row gap-10 items-center md:items-start">
+        <!-- Imagens paisagem -->
+        <div class="flex flex-col gap-6 w-full md:w-2/3">
+          <img src="/estrela-site/images/foto-pastel-da-pista.jpeg" alt="Foto Pastel da Pista" class="rounded-xl shadow-lg object-cover h-64 md:h-96 w-full hover:scale-105 transition-transform duration-500" />
+          <img src="/estrela-site/images/deposito.jpeg" alt="Depósito" class="rounded-xl shadow-lg object-cover h-64 md:h-96 w-full hover:scale-105 transition-transform duration-500" />
+        </div>
+
+        <!-- Imagem retrato -->
+        <div class="w-full md:w-1/3">
+          <img src="/estrela-site/images/IMAGEM-RETRATO.jpeg" alt="Imagem retrato" class="rounded-xl shadow-lg object-cover h-96 md:h-[600px] w-full hover:scale-105 transition-transform duration-500" />
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Seção Contato -->
-  <section id="contato" class="py-16 px-4 bg-blue-50 text-center">
-    <h2 class="text-3xl font-bold text-blue-700 mb-4">Entre em Contato</h2>
-    <p class="text-gray-700 mb-6">WhatsApp: <a href="https://wa.me/5513974134100" class="text-blue-600 hover:underline">13 97413-4100</a></p>
+  <!-- Serviços -->
+  <section id="servicos" class="py-24 bg-gradient-to-tr from-blue-50 via-white to-blue-50">
+    <div class="max-w-7xl mx-auto px-6">
+      <h2 class="text-4xl font-extrabold text-center text-blue-900 mb-12 drop-shadow-md">Nossos Serviços</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+        <div class="card p-6 bg-white rounded-2xl shadow-md">
+          <h3 class="font-semibold text-2xl mb-3 text-blue-700">Consultoria Tributária</h3>
+          <p class="text-gray-600 leading-relaxed">Orientação especializada para empresas que operam no lucro real e precisam otimizar a gestão fiscal.</p>
+        </div>
+        <div class="card p-6 bg-white rounded-2xl shadow-md">
+          <h3 class="font-semibold text-2xl mb-3 text-blue-700">Suporte Técnico</h3>
+          <p class="text-gray-600 leading-relaxed">Atendimento rápido e eficiente para garantir que seu sistema nunca pare.</p>
+        </div>
+        <div class="card p-6 bg-white rounded-2xl shadow-md">
+          <h3 class="font-semibold text-2xl mb-3 text-blue-700">Implantação de Sistemas</h3>
+          <p class="text-gray-600 leading-relaxed">Integração completa de software e hardware com treinamento personalizado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Catálogo -->
+  <section id="catalogo" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <h2 class="text-4xl font-extrabold mb-14 text-blue-900 drop-shadow-md">Catálogo de Produtos</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+        <!-- Produto 1 -->
+        <div class="card border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+          <img src="/estrela-site/images/image-1.png" alt="Softwares de Gestão" class="mb-5 rounded-xl mx-auto max-h-40 object-contain" />
+          <h4 class="font-semibold text-xl mb-2 text-blue-700">Softwares de Gestão</h4>
+          <p class="text-gray-600 text-sm">Soluções para automação comercial sob medida.</p>
+        </div>
+        <!-- Produto 2 -->
+        <div class="card border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+          <img src="/estrela-site/images/impressora-termica.png" alt="Impressoras Térmicas" class="mb-5 rounded-xl mx-auto max-h-40 object-contain" />
+          <h4 class="font-semibold text-xl mb-2 text-blue-700">Impressoras Térmicas</h4>
+          <p class="text-gray-600 text-sm">Modelos ideais para PDVs e notas fiscais.</p>
+        </div>
+        <!-- Produto 3 -->
+        <div class="card border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+          <img src="/estrela-site/images/Leitor-de-codigo-de-barras.png" alt="Leitores de Código de Barras" class="mb-5 rounded-xl mx-auto max-h-40 object-contain" />
+          <h4 class="font-semibold text-xl mb-2 text-blue-700">Leitores de Código de Barras</h4>
+          <p class="text-gray-600 text-sm">Alta performance para leitura rápida e precisa.</p>
+        </div>
+        <!-- Produto 4 -->
+        <div class="card border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+          <img src="/estrela-site/images/PC.png" alt="Computadores Completos" class="mb-5 rounded-xl mx-auto max-h-40 object-contain" />
+          <h4 class="font-semibold text-xl mb-2 text-blue-700">Computadores Completos</h4>
+          <p class="text-gray-600 text-sm">Kits completos para frente de caixa ou gestão interna.</p>
+        </div>
+        <!-- Produto 5 -->
+        <div class="card border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+          <img src="/estrela-site/images/Bobinas.png" alt="Bobinas Térmicas" class="mb-5 rounded-xl mx-auto max-h-40 object-contain" />
+          <h4 class="font-semibold text-xl mb-2 text-blue-700">Bobinas Térmicas</h4>
+          <p class="text-gray-600 text-sm">Bobinas para impressão térmica em diversos tamanhos.</p>
+        </div>
+        <!-- Produto 6 -->
+        <div class="card border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+          <img src="/estrela-site/images/Monitor.png" alt="Monitores" class="mb-5 rounded-xl mx-auto max-h-40 object-contain" />
+          <h4 class="font-semibold text-xl mb-2 text-blue-700">Monitores</h4>
+          <p class="text-gray-600 text-sm">Desempenho e qualidade para o dia a dia do seu negócio.</p>
+        </div>
+        <!-- Produto 7 -->
+        <div class="card border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+          <img src="/estrela-site/images/SSDS.png" alt="SSDs" class="mb-5 rounded-xl mx-auto max-h-40 object-contain" />
+          <h4 class="font-semibold text-xl mb-2 text-blue-700">SSDs</h4>
+          <p class="text-gray-600 text-sm">Armazenamento rápido e confiável para melhorar o desempenho.</p>
+        </div>
+        <!-- Produto 8 -->
+        <div class="card border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+          <img src="/estrela-site/images/memoria.png" alt="Memória RAM" class="mb-5 rounded-xl mx-auto max-h-40 object-contain" />
+          <h4 class="font-semibold text-xl mb-2 text-blue-700">Memória RAM</h4>
+          <p class="text-gray-600 text-sm">Melhore a velocidade e a capacidade dos seus sistemas.</p>
+        </div>
+        <!-- Produto 9 -->
+        <div class="card border border-gray-200 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+          <img src="/estrela-site/images/mouse-sem-fio-e-teclado.jpg" alt="Bobinas e Papel" class="mb-5 rounded-xl mx-auto max-h-40 object-contain" />
+          <h4 class="font-semibold text-xl mb-2 text-blue-700">Perifericos</h4>
+          <p class="text-gray-600 text-sm">Mouses, teclados e outros perifericos com e sem fio.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contato -->
+  <section id="contato" class="py-24 bg-gradient-to-tr from-blue-50 via-white to-blue-50">
+    <div class="max-w-xl mx-auto px-6 text-center">
+      <h2 class="text-4xl font-extrabold mb-8 text-blue-900 drop-shadow-md">Fale Conosco</h2>
+      <p class="mb-8 text-gray-700 leading-relaxed">
+        Entre em contato pelo WhatsApp, e-mail ou redes sociais. Estamos prontos para te atender!
+      </p>
+      <div class="space-y-4 max-w-xs mx-auto">
+        <a href="https://wa.me/5513974134100" class="block bg-green-600 text-white px-6 py-3 rounded-full font-semibold shadow-md hover:bg-green-700 hover:shadow-lg transition-colors duration-300">
+          WhatsApp
+        </a>
+        <p class="text-sm text-gray-700">
+          Email: <a href="mailto:estrelagestaoinfo@gmail.com" class="text-blue-600 underline hover:text-blue-800">estrelagestaoinfo@gmail.com</a>
+        </p>
+        <p class="text-sm text-gray-700">
+          Instagram: <a href="https://instagram.com/estrelagestaoinformatica" class="text-pink-600 underline hover:text-pink-800">@estrelagestaoinformatica</a>
+        </p>
+      </div>
+    </div>
   </section>
 </main>
 
-<!-- Rodapé -->
+<!-- Footer -->
 <footer class="bg-white text-center py-6 text-sm text-gray-500 border-t border-gray-200">
   <p>&copy; 2025 Estrela Gestão em Informática. Todos os direitos reservados.</p>
 </footer>
 
-<!-- Script do menu -->
 <script>
-  const toggle = document.getElementById('menuToggle');
-  const menu = document.getElementById('mobileMenu');
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
 
-  toggle.addEventListener('click', () => {
-    toggle.classList.toggle('active');
-    menu.classList.toggle('translate-x-full');
-    menu.classList.toggle('translate-x-0');
-  });
-
-  // Fechar menu ao clicar em um link
-  document.querySelectorAll('#mobileMenu a').forEach(link => {
-    link.addEventListener('click', () => {
-      toggle.classList.remove('active');
-      menu.classList.add('translate-x-full');
-      menu.classList.remove('translate-x-0');
-    });
-  });
-</script>
-
-</body>
-</html>
+ 
